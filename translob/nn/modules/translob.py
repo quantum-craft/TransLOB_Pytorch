@@ -30,8 +30,6 @@ class TransLOB(Module):
     Args:
         in_features (int, default=40): The number of input features.
         out_features (int, default=3): The number of output features.
-        out_activation (torch.nn.Module, default=torch.nn.Softmax(-1)):
-            The activation layer applied to the output.
         conv_n_layers (int, default=5): The number of convolutional layers.
         conv_n_features (int, default=14): The number of features
             in the convolutional layers.
