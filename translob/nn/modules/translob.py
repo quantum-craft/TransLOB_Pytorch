@@ -78,7 +78,6 @@ class TransLOB(Module):
         in_features: int = 40,
         out_features: int = 3,
         len_sequence: int = 100,
-        out_activation: Module = Softmax(-1),
         conv_n_features: int = 14,
         conv_kernel_size: int = 2,
         conv_dilation: Union[Tuple[int, ...], int] = (1, 2, 4, 8, 16),
@@ -128,8 +127,7 @@ class TransLOB(Module):
             Flatten(1, -1),
             multi_layer_perceptron,
             Dropout(dropout_rate),
-            Linear(mlp_dim, out_features),
-            out_activation,
+            Linear(mlp_dim, out_features)
         )
 
     def forward(self, input: Tensor) -> Tensor:
