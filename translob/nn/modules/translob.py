@@ -129,6 +129,13 @@ class TransLOB(Module):
         )
 
     def forward(self, input: Tensor) -> Tensor:
+        #  Adjust input Shape to match the following:
+        # - Input: :math:`(N, C, L)` where :math:`N` is the batch size,
+        #   :math:`C` is the number of features and
+        #   :math:`L` is the length of the sequence.
+        #   :math:`C = 40` in the original paper: ask/bid, level 1-10, and price/volume.
+        #   :math:`L = 100` in the original paper.
+        input = input.transpose(1, 2)
         input = self.pre_transformer(input).movedim(-1, 0)
         input = self.transformer(input)
         input = self.post_transformer(input.movedim(0, -1))

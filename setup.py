@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='TransLOB',
-    version='0.0.1',
+    version='0.0.2',
     description='PyTorch implementation of TransLOB.',
     author='',
     author_email='',
