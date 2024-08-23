@@ -66,9 +66,9 @@ class TransLOB(Module):
         >>> import torch
         >>>
         >>> m = TransLOB()
-        >>> input = torch.empty(1, 40, 100)
+        >>> input = torch.empty(B, 100, 40)
         >>> m(input).size()
-        torch.Size([1, 3])
+        torch.Size([B, 3])
     """
 
     def __init__(
@@ -89,6 +89,9 @@ class TransLOB(Module):
         dropout_rate: float = 0.1,
     ):
         super().__init__()
+
+        self.name = "translob"
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         # Define convolutional module.
         convolution = CausalConvLayers(
@@ -125,16 +128,14 @@ class TransLOB(Module):
             Flatten(1, -1),
             multi_layer_perceptron,
             Dropout(dropout_rate),
-            Linear(mlp_dim, out_features)
+            Linear(mlp_dim, out_features),
         )
 
     def forward(self, input: Tensor) -> Tensor:
         #  Adjust input Shape to match the following:
-        # - Input: :math:`(N, C, L)` where :math:`N` is the batch size,
-        #   :math:`C` is the number of features and
-        #   :math:`L` is the length of the sequence.
-        #   :math:`C = 40` in the original paper: ask/bid, level 1-10, and price/volume.
-        #   :math:`L = 100` in the original paper.
+        # - Input: :math:`(N, L, C)` where :math:`N` is the batch size,
+        #   :math:`C = 40` is the number of features, in the original paper: ask/bid, level 1-10, and price/volume.
+        #   :math:`L = 100` is the length of the sequence,
         input = input.transpose(1, 2)
         input = self.pre_transformer(input).movedim(-1, 0)
         input = self.transformer(input)
